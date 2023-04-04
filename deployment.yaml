@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-ts-blockchain
+spec:
+  selector:
+    matchLabels:
+      app: simple-ts-blockchain
+  template:
+    metadata:
+      labels:
+        app: simple-ts-blockchain
+    spec:
+      containers:
+      - name: simple-ts-blockchain
+        image: hillpro/simple-ts-blockchain
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3001
+          hostPort: 3001
+        - containerPort: 6001
+          hostPort: 6001
