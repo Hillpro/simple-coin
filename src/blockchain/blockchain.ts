@@ -5,19 +5,23 @@ export class BlockChain {
     private blockchain: Block[]
 
     constructor() {
-        this.blockchain = [this.getGenesisBlock()]
+        this.blockchain = [this.genesisBlock]
     }
 
-    getGenesisBlock() {
+    get genesisBlock() {
         return new Block(0, "0", 1680546496366, new Data("First block")); // hash:"d00ff3db391778c7893b9c804c0f2d473edbe7649f21b318c349f228dbd5b57e"
     }
 
-    getLatestBlock() {
+    get latestBlock() {
         return this.blockchain[this.blockchain.length - 1];
     }
 
+    get blocks() {
+        return this.blockchain;
+    }
+
     generateNextBlock(blockData: Data) {
-        let previousBlock = this.getLatestBlock();
+        let previousBlock = this.latestBlock;
         let nextIndex = previousBlock.index + 1;
         let nextTimestamp = new Date().getTime();
         return new Block(nextIndex, previousBlock.hash, nextTimestamp, blockData);
@@ -30,7 +34,7 @@ export class BlockChain {
     }
 
     isNewBlockValid(newBlock: Block) {
-        return this.isBlockValid(newBlock, this.getLatestBlock())
+        return this.isBlockValid(newBlock, this.latestBlock)
     }
 
     isBlockValid(newBlock: Block, previousBlock: Block) {
@@ -59,7 +63,7 @@ export class BlockChain {
     }
 
     isValidChain(blocks: Block[]) {
-        if (JSON.stringify(blocks[0]) !== JSON.stringify(this.getGenesisBlock())) {
+        if (JSON.stringify(blocks[0]) !== JSON.stringify(this.genesisBlock)) {
             return false;
         }
         let tempBlocks = [blocks[0]];

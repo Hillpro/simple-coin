@@ -8,10 +8,14 @@ const enum MessageType {
     QUERY_ALL= 1,
     RESPONSE_BLOCKCHAIN= 2
 };
+interface Message {
+    type: MessageType,
+    data?: any
+}
 
 export class P2PServer {
-    server: WebSocket.Server
-    sockets: WebSocket[];
+    private server: WebSocket.Server
+    private sockets: WebSocket[];
 
     constructor(private blockchain: BlockChain) {
         this.sockets = [];
@@ -39,7 +43,7 @@ export class P2PServer {
         });
     }
 
-    getPeers() {
+    get peers() {
         return this.sockets.map(s => s.url);
     }
 
@@ -47,7 +51,7 @@ export class P2PServer {
         this.sockets.push(ws);
         this.initMessageHandler(ws);
         this.initErrorHandler(ws);
-        this.sendMessage(ws, MessageType.QUERY_LATEST);
+        this.sendMessage(ws, {'type': MessageType.QUERY_LATEST});
     }
 
     private initMessageHandler(ws: WebSocket) {
@@ -56,10 +60,10 @@ export class P2PServer {
             console.log('Received message' + JSON.stringify(message));
             switch (message.type) {
                 case MessageType.QUERY_LATEST:
-                    this.sendMessage(ws, MessageType.RESPONSE_BLOCKCHAIN, this.blockchain.getLatestBlock());
+                    this.sendMessage(ws, this.latestBlockMessage);
                     break;
                 case MessageType.QUERY_ALL:
-                    this.sendMessage(ws, MessageType.RESPONSE_BLOCKCHAIN, this.blockchain);
+                    this.sendMessage(ws, this.blockchainMessage);
                     break;
                 case MessageType.RESPONSE_BLOCKCHAIN:
                     this.handleBlockchainResponse(message);
@@ -69,23 +73,23 @@ export class P2PServer {
     }
 
     handleBlockchainResponse(message: any) {
-        let receivedBlocks = JSON.parse(message.data)['blockchain'].sort((b1: Block, b2: Block) => (b1.index - b2.index));
+        let receivedBlocks = JSON.parse(message.data).sort((b1: Block, b2: Block) => (b1.index - b2.index));
         let latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
-        let latestBlockHeld = this.blockchain.getLatestBlock();
+        let latestBlockHeld = this.blockchain.latestBlock;
 
         if (latestBlockReceived.index > latestBlockHeld.index) {
             console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' + latestBlockReceived.index);
             if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
                 console.log("We can append the received block to our chain");
                 this.blockchain.addBlock(latestBlockReceived);
-                this.broadcast(MessageType.RESPONSE_BLOCKCHAIN, this.blockchain.getLatestBlock());
+                this.broadcast(this.latestBlockMessage);
             } else if (receivedBlocks.length === 1) {
                 console.log("We have to query the chain from our peer");
-                this.broadcast(MessageType.RESPONSE_BLOCKCHAIN, this.blockchain);
+                this.broadcast(this.blockchainMessage);
             } else {
                 console.log("Received blockchain is longer than current blockchain");
                 if (this.blockchain.replaceChain(receivedBlocks)) {
-                    this.broadcast(MessageType.RESPONSE_BLOCKCHAIN, this.blockchain);
+                    this.broadcast(this.blockchainMessage);
                 }
             }
         } else {
@@ -94,7 +98,7 @@ export class P2PServer {
     };
 
     blockAdded() {
-        this.broadcast(MessageType.RESPONSE_BLOCKCHAIN, this.blockchain);
+        this.broadcast(this.latestBlockMessage);
     }
     
     private initErrorHandler(ws: WebSocket) {
@@ -107,14 +111,23 @@ export class P2PServer {
         this.sockets.splice(this.sockets.indexOf(ws), 1);
     }
 
-    private broadcast(type: MessageType, data?: any) {
+    private broadcast(message: Message) {
         this.sockets.forEach(socket => {
-            this.sendMessage(socket, type, data)
+            this.sendMessage(socket, message)
         })
     }
 
-    private sendMessage(ws: WebSocket, type: MessageType, data?: any) {
-        ws.send(JSON.stringify({'type': type, 'data': JSON.stringify(data)}))
+    private sendMessage(ws: WebSocket, message: Message) {
+        message.data = JSON.stringify(message.data)
+        ws.send(JSON.stringify(message))
+    }
+
+    private get latestBlockMessage(): Message {
+        return {'type': MessageType.RESPONSE_BLOCKCHAIN, 'data': [this.blockchain.latestBlock]}
+    }
+
+    private get blockchainMessage(): Message {
+        return {'type': MessageType.RESPONSE_BLOCKCHAIN, 'data': this.blockchain.blocks}
     }
 }
 

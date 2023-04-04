@@ -36,7 +36,7 @@ export class HttpServer {
         });
 
         router.get('/peers', (req, res) => {
-            res.send(this.p2pServer.getPeers());
+            res.send(this.p2pServer.peers);
         });
 
         router.post('/addPeer', (req, res) => {
