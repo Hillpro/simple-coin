@@ -1,10 +1,11 @@
-import { BlockChain } from "./blockchain";
-import { Data } from "./data";
+import { BlockChain } from "./blockchain/blockchain";
+import { HttpServer } from "./http-server";
+import { P2PServer } from "./p2p-server";
 
-let blockChain = new BlockChain()
+let blockchain = new BlockChain()
 
-let newBlock = blockChain.generateNextBlock(new Data("Hello"));
+let p2pServer = new P2PServer(blockchain)
+let httpServer = new HttpServer(blockchain, p2pServer)
 
-blockChain.addBlock(newBlock);
-
-console.log(JSON.stringify(blockChain));
+httpServer.start();
+p2pServer.start();

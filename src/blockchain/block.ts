@@ -10,7 +10,7 @@ export class Block {
     
     constructor(index: number, previousHash: string, timestamp: number, data: Data) {
         this.index = index;
-        this.previousHash = previousHash.toString();
+        this.previousHash = previousHash;
         this.timestamp = timestamp;
         this.data = data;
         this.hash = this.calculateHash();

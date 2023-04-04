@@ -2,7 +2,7 @@ import { Block } from "./block";
 import { Data } from "./data";
 
 export class BlockChain {
-    blockchain: [Block]
+    private blockchain: Block[]
 
     constructor() {
         this.blockchain = [this.getGenesisBlock()]
@@ -46,4 +46,31 @@ export class BlockChain {
         }
         return true;
     }
+
+    replaceChain(newBlocks: Block[]) {
+        if (this.isValidChain(newBlocks) && newBlocks.length > this.blockchain.length) {
+            console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
+            this.blockchain = newBlocks;
+            return true;
+        } else {
+            console.log('Received blockchain invalid');
+            return false;
+        }
+    }
+
+    isValidChain(blocks: Block[]) {
+        if (JSON.stringify(blocks[0]) !== JSON.stringify(this.getGenesisBlock())) {
+            return false;
+        }
+        let tempBlocks = [blocks[0]];
+
+        for (var i = 1; i < blocks.length; i++) {
+            if (this.isBlockValid(blocks[i], tempBlocks[i - 1])) {
+                tempBlocks.push(blocks[i]);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    };
 }
