@@ -38,6 +38,10 @@ export class BlockChain {
     }
 
     isBlockValid(newBlock: Block, previousBlock: Block) {
+        if (!Block.isBlockStructureValid(newBlock)) {
+            console.log('invalid block structure: ' + JSON.stringify(newBlock));
+            return false;
+        }
         if (previousBlock.index + 1 !== newBlock.index) {
             console.log('Invalid index');
             return false;

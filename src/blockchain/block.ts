@@ -25,6 +25,14 @@ export class Block {
     }
 
     static calculateHash(index: number, previousHash: string, timestamp: number, data: Data) {
-        return SHA256(index + previousHash + timestamp + data).toString()
+        return SHA256(index + previousHash + timestamp + data).toString();
+    }
+
+    static isBlockStructureValid(block: Block) {
+        return typeof block.index === 'number'
+            && typeof block.previousHash === 'string'
+            && typeof block.timestamp === 'number'
+            && typeof block.data === 'object'
+            && typeof block.hash === 'string';
     }
 }
