@@ -8,12 +8,7 @@ export class Block {
   data: Data;
   hash: string;
 
-  constructor(
-    index: number,
-    previousHash: string,
-    timestamp: number,
-    data: Data,
-  ) {
+  constructor(index: number, previousHash: string, timestamp: number, data: Data) {
     this.index = index;
     this.previousHash = previousHash;
     this.timestamp = timestamp;
@@ -22,29 +17,14 @@ export class Block {
   }
 
   calculateHash() {
-    return Block.calculateHash(
-      this.index,
-      this.previousHash,
-      this.timestamp,
-      this.data,
-    );
+    return Block.calculateHash(this.index, this.previousHash, this.timestamp, this.data);
   }
 
   static calculateHashForBlock(block: Block) {
-    return Block.calculateHash(
-      block.index,
-      block.previousHash,
-      block.timestamp,
-      block.data,
-    );
+    return Block.calculateHash(block.index, block.previousHash, block.timestamp, block.data);
   }
 
-  static calculateHash(
-    index: number,
-    previousHash: string,
-    timestamp: number,
-    data: Data,
-  ) {
+  static calculateHash(index: number, previousHash: string, timestamp: number, data: Data) {
     return SHA256(index + previousHash + timestamp + data).toString();
   }
 

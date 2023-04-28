@@ -56,10 +56,7 @@ export class BlockChain {
   }
 
   replaceChain(newBlocks: Block[]) {
-    if (
-      BlockChain.isValidChain(newBlocks) &&
-      newBlocks.length > this.blockchain.length
-    ) {
+    if (BlockChain.isValidChain(newBlocks) && newBlocks.length > this.blockchain.length) {
       console.log(
         'Received blockchain is valid. Replacing current blockchain with received blockchain',
       );

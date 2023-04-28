@@ -18,9 +18,7 @@ export class HttpServer {
   }
 
   start() {
-    this.app.listen(http_port, () =>
-      console.log('Listening http on port: ' + http_port),
-    );
+    this.app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
   }
 
   private get router() {
@@ -30,9 +28,7 @@ export class HttpServer {
     });
 
     router.post('/mineBlock', (req, res) => {
-      const newBlock = this.blockchain.generateNextBlock(
-        new Data(req.body.data),
-      );
+      const newBlock = this.blockchain.generateNextBlock(new Data(req.body.data));
       this.blockchain.addBlock(newBlock);
       this.p2pServer.blockAdded();
       console.log('block added: ' + JSON.stringify(newBlock));

@@ -100,9 +100,7 @@ export class P2PServer {
         }
       }
     } else {
-      console.log(
-        'received blockchain is not longer than current blockchain. Do nothing',
-      );
+      console.log('received blockchain is not longer than current blockchain. Do nothing');
     }
   }
 
