@@ -21,9 +21,9 @@ export class BlockChain {
     }
 
     generateNextBlock(blockData: Data) {
-        let previousBlock = this.latestBlock;
-        let nextIndex = previousBlock.index + 1;
-        let nextTimestamp = new Date().getTime();
+        const previousBlock = this.latestBlock;
+        const nextIndex = previousBlock.index + 1;
+        const nextTimestamp = new Date().getTime();
         return new Block(nextIndex, previousBlock.hash, nextTimestamp, blockData);
     }
 
@@ -70,9 +70,9 @@ export class BlockChain {
         if (JSON.stringify(blocks[0]) !== JSON.stringify(this.genesisBlock)) {
             return false;
         }
-        let tempBlocks = [blocks[0]];
+        const tempBlocks = [blocks[0]];
 
-        for (var i = 1; i < blocks.length; i++) {
+        for (let i = 1; i < blocks.length; i++) {
             if (this.isBlockValid(blocks[i], tempBlocks[i - 1])) {
                 tempBlocks.push(blocks[i]);
             } else {
@@ -80,5 +80,5 @@ export class BlockChain {
             }
         }
         return true;
-    };
+    }
 }

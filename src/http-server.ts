@@ -22,13 +22,13 @@ export class HttpServer {
     }
 
     private get router() {
-        let router = Router();
+        const router = Router();
         router.get('/blocks', (req, res) => {
             res.json(this.blockchain)
         });
 
         router.post('/mineBlock', (req, res) => {
-            var newBlock = this.blockchain.generateNextBlock(new Data(req.body.data));
+            const newBlock = this.blockchain.generateNextBlock(new Data(req.body.data));
             this.blockchain.addBlock(newBlock);
             this.p2pServer.blockAdded();
             console.log('block added: ' + JSON.stringify(newBlock));

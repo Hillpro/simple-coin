@@ -7,7 +7,7 @@ const enum MessageType {
     QUERY_LATEST= 0,
     QUERY_ALL= 1,
     RESPONSE_BLOCKCHAIN= 2
-};
+}
 interface Message {
     type: MessageType,
     data?: any
@@ -35,7 +35,7 @@ export class P2PServer {
 
     connectToPeers(newPeers: any[]) {
         newPeers.forEach((peer) => {
-            let ws = new WebSocket(peer);
+            const ws = new WebSocket(peer);
             ws.on('open', () => this.initConnection(ws));
             ws.on('error', () => {
                 console.log('connection failed')
@@ -56,7 +56,7 @@ export class P2PServer {
 
     private initMessageHandler(ws: WebSocket) {
         ws.on('message', (data) => {
-            let message = JSON.parse(data.toString());
+            const message = JSON.parse(data.toString());
             console.log('Received message' + JSON.stringify(message));
             switch (message.type) {
                 case MessageType.QUERY_LATEST:
@@ -73,9 +73,9 @@ export class P2PServer {
     }
 
     handleBlockchainResponse(message: any) {
-        let receivedBlocks = JSON.parse(message.data).sort((b1: Block, b2: Block) => (b1.index - b2.index));
-        let latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
-        let latestBlockHeld = this.blockchain.latestBlock;
+        const receivedBlocks = JSON.parse(message.data).sort((b1: Block, b2: Block) => (b1.index - b2.index));
+        const latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
+        const latestBlockHeld = this.blockchain.latestBlock;
 
         if (latestBlockReceived.index > latestBlockHeld.index) {
             console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' + latestBlockReceived.index);
@@ -95,7 +95,7 @@ export class P2PServer {
         } else {
             console.log('received blockchain is not longer than current blockchain. Do nothing');
         }
-    };
+    }
 
     blockAdded() {
         this.broadcast(this.latestBlockMessage);
@@ -130,7 +130,3 @@ export class P2PServer {
         return {'type': MessageType.RESPONSE_BLOCKCHAIN, 'data': this.blockchain.blocks}
     }
 }
-
-
-
-
