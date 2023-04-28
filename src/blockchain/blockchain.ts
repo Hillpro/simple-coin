@@ -5,10 +5,10 @@ export class BlockChain {
     private blockchain: Block[]
 
     constructor() {
-        this.blockchain = [this.genesisBlock]
+        this.blockchain = [BlockChain.genesisBlock]
     }
 
-    get genesisBlock() {
+    static get genesisBlock() {
         return new Block(0, "0", 1680546496366, new Data("First block")); // hash:"d00ff3db391778c7893b9c804c0f2d473edbe7649f21b318c349f228dbd5b57e"
     }
 
@@ -34,10 +34,10 @@ export class BlockChain {
     }
 
     isNewBlockValid(newBlock: Block) {
-        return this.isBlockValid(newBlock, this.latestBlock)
+        return BlockChain.isBlockValid(newBlock, this.latestBlock)
     }
 
-    isBlockValid(newBlock: Block, previousBlock: Block) {
+    static isBlockValid(newBlock: Block, previousBlock: Block) {
         if (!Block.isBlockStructureValid(newBlock)) {
             console.log('invalid block structure: ' + JSON.stringify(newBlock));
             return false;
@@ -56,7 +56,7 @@ export class BlockChain {
     }
 
     replaceChain(newBlocks: Block[]) {
-        if (this.isValidChain(newBlocks) && newBlocks.length > this.blockchain.length) {
+        if (BlockChain.isValidChain(newBlocks) && newBlocks.length > this.blockchain.length) {
             console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
             this.blockchain = newBlocks;
             return true;
@@ -66,7 +66,7 @@ export class BlockChain {
         }
     }
 
-    isValidChain(blocks: Block[]) {
+    static isValidChain(blocks: Block[]) {
         if (JSON.stringify(blocks[0]) !== JSON.stringify(this.genesisBlock)) {
             return false;
         }
