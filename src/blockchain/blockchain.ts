@@ -9,7 +9,8 @@ export class BlockChain {
   }
 
   static get genesisBlock() {
-    return new Block(0, '0', 1680546496366, new Data('First block')); // hash:"d00ff3db391778c7893b9c804c0f2d473edbe7649f21b318c349f228dbd5b57e"
+    // hash:"d00ff3db391778c7893b9c804c0f2d473edbe7649f21b318c349f228dbd5b57e"
+    return new Block(0, '0', 1680546496366, new Data('First block'));
   }
 
   get latestBlock() {
