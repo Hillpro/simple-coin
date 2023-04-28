@@ -3,8 +3,10 @@
         "node": true,
         "es2022": true
     },
+    "plugins": ["@typescript-eslint/eslint-plugin"],
     "extends": [
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
     ],
     "overrides": [
     ],
