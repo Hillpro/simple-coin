@@ -1,7 +1,7 @@
 export class Data {
-    data: string;
+  data: string;
 
-    constructor(data: string) {
-        this.data = data;
-    }
+  constructor(data: string) {
+    this.data = data;
+  }
 }
