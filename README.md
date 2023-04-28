@@ -1,4 +1,4 @@
-# Simple TypeScript Blockchain
+# SimpleChain
 
 Typescript implementation of a functionning blockchain with basic features.
 

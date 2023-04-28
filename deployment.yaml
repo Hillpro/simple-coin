@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-ts-blockchain
+  name: simple-chain
 spec:
   selector:
     matchLabels:
-      app: simple-ts-blockchain
+      app: simple-chain
   template:
     metadata:
       labels:
-        app: simple-ts-blockchain
+        app: simple-chain
     spec:
       containers:
-      - name: simple-ts-blockchain
-        image: hillpro/simple-ts-blockchain
+      - name: simple-chain
+        image: hillpro/simple-chain
         resources:
           limits:
             memory: "128Mi"
