@@ -76,7 +76,7 @@ export class BlockChain {
     const tempBlocks = [blocks[0]];
 
     for (let i = 1; i < blocks.length; i++) {
-      if (this.isBlockValid(blocks[i], tempBlocks[i - 1])) {
+      if (BlockChain.isBlockValid(blocks[i], tempBlocks[i - 1])) {
         tempBlocks.push(blocks[i]);
       } else {
         return false;
