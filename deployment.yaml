@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-chain
+  name: simple-coin
 spec:
   selector:
     matchLabels:
-      app: simple-chain
+      app: simple-coin
   template:
     metadata:
       labels:
-        app: simple-chain
+        app: simple-coin
     spec:
       containers:
-      - name: simple-chain
-        image: hillpro/simple-chain
+      - name: simple-coin
+        image: hillpro/simple-coin
         resources:
           limits:
             memory: "128Mi"

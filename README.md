@@ -1,6 +1,6 @@
-# SimpleChain
+# SimpleCoin
 
-Typescript implementation of a functionning blockchain with basic features.
+Typescript implementation of a functionning cryptocurrency with PoW, transactions and wallets.
 
 ### Key concepts of the Blockchain
 * HTTP interface to control the node
@@ -11,23 +11,46 @@ Typescript implementation of a functionning blockchain with basic features.
 
 
 ### Quick start
-(set up two connected nodes and mine 1 block)
 ```
 npm install
-HTTP_PORT=3001 P2P_PORT=6001 npm start
-HTTP_PORT=3002 P2P_PORT=6002 PEERS=ws://localhost:6001 npm start
-curl -H "Content-type:application/json" --data '{"data" : "Some data to the first block"}' http://localhost:3001/mineBlock
+npm start
 ```
 
-### HTTP API
 ##### Get blockchain
 ```
 curl http://localhost:3001/blocks
 ```
-##### Create block
+
+##### Mine a block
 ```
-curl -H "Content-type:application/json" --data '{"data" : "Some data to the first block"}' http://localhost:3001/mineBlock
+curl -X POST http://localhost:3001/mineBlock
 ``` 
+
+##### Send transaction
+```
+curl -H "Content-type: application/json" --data '{"address": "ADDRESS", "amount" : 50}' http://localhost:3001/sendTransaction
+```
+
+##### Query transaction pool
+```
+curl http://localhost:3001/transactionPool
+```
+
+##### Mine transaction
+```
+curl -H "Content-type: application/json" --data '{"address": "ADDRESS", "amount" : 50}' http://localhost:3001/mineTransaction
+```
+
+##### Get balance
+```
+curl http://localhost:3001/balance
+```
+
+#### Query information about a specific address
+```
+curl http://localhost:3001/address/ADDRESS
+```
+
 ##### Add peer
 ```
 curl -H "Content-type:application/json" --data '{"peer" : "ws://localhost:6001"}' http://localhost:3001/addPeer
