@@ -1,5 +1,7 @@
 import { Block } from './block';
 import { Data } from './data';
+import { Transaction } from './transaction/transaction';
+import { UnspentTxOut } from './transaction/unspent-tx-out';
 
 // in seconds
 const BLOCK_GENERATION_INTERVAL = 10;
@@ -9,14 +11,16 @@ const DIFFICULTY_ADJUSTMENT_INTERVAL = 10;
 
 export class BlockChain {
   private blockchain: Block[];
+  private unspentTxOuts: UnspentTxOut[];
 
   constructor() {
     this.blockchain = [BlockChain.genesisBlock];
+    this.unspentTxOuts = [];
   }
 
   static get genesisBlock() {
     // hash:"d00ff3db391778c7893b9c804c0f2d473edbe7649f21b318c349f228dbd5b57e"
-    return new Block(0, '0', 1680546496366, new Data('First block'), 0);
+    return new Block(0, '0', 1680546496366, [], 0);
   }
 
   get latestBlock() {
@@ -56,17 +60,64 @@ export class BlockChain {
     }
   }
 
-  generateNextBlock(blockData: Data) {
+  generateNextBlock(transactions: Transaction[]) {
     const previousBlock = this.latestBlock;
     const nextIndex = previousBlock.index + 1;
     const nextTimestamp = new Date().getTime();
-    return new Block(nextIndex, previousBlock.hash, nextTimestamp, blockData, this.difficulty);
+    return new Block(nextIndex, previousBlock.hash, nextTimestamp, transactions, this.difficulty);
   }
 
   addBlock(newBlock: Block) {
     if (this.isNewBlockValid(newBlock)) {
-      this.blockchain.push(newBlock);
+      const retVal = this.processTransactions(newBlock);
+
+      if (retVal === null) {
+        return false;
+      } else {
+        this.blockchain.push(newBlock);
+        this.unspentTxOuts = retVal;
+        return true;
+      }
     }
+  }
+
+  processTransactions(block: Block) {
+    if (!Transaction.isValidTransactionsStructure(block.data)) {
+      return null;
+    }
+
+    // TODO
+    /*if (!Transaction.validateBlockTransactions(block.data, this.unspentTxOuts, block.index)) {
+      console.log('invalid block transactions');
+      return null;
+    }*/
+
+    return this.updateUnspentTxOuts(block.data, this.unspentTxOuts);
+  }
+
+  findUnspentTxOut(transactionId: string, index: number, unspentTxOuts: UnspentTxOut[]) {
+    return unspentTxOuts.find(
+      (uTxOut) => uTxOut.txOutId === transactionId && uTxOut.txOutIndex === index,
+    );
+  }
+
+  updateUnspentTxOuts(transactions: Transaction[], aUnspentTxOuts: UnspentTxOut[]) {
+    const newUnspentTxOuts = transactions
+      .map((t) =>
+        t.txOuts.map((txOut, index) => new UnspentTxOut(t.id, index, txOut.address, txOut.amount)),
+      )
+      .reduce((a, b) => a.concat(b), []);
+
+    const consumedTxOuts = transactions
+      .map((t) => t.txIns)
+      .reduce((a, b) => a.concat(b), [])
+      .map((txIn) => new UnspentTxOut(txIn.txOutId, txIn.txOutIndex, '', 0));
+
+    const resultingUnspentTxOuts = aUnspentTxOuts
+      .filter((uTxO) => !this.findUnspentTxOut(uTxO.txOutId, uTxO.txOutIndex, consumedTxOuts))
+      .concat(newUnspentTxOuts);
+
+    return resultingUnspentTxOuts;
   }
 
   isNewBlockValid(newBlock: Block) {

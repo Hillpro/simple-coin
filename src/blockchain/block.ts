@@ -1,11 +1,11 @@
 import { SHA256 } from 'crypto-js';
-import { Data } from './data';
+import { Transaction } from './transaction/transaction';
 
 export class Block {
   index: number;
   previousHash: string;
   timestamp: number;
-  data: Data;
+  data: Transaction[];
   hash: string;
   difficulty: number;
   nonce: number;
@@ -14,7 +14,7 @@ export class Block {
     index: number,
     previousHash: string,
     timestamp: number,
-    data: Data,
+    data: Transaction[],
     difficulty: number,
     nonce = 0,
   ) {
@@ -62,7 +62,7 @@ export class Block {
     index: number,
     previousHash: string,
     timestamp: number,
-    data: Data,
+    data: Transaction[],
     difficulty: number,
     nonce: number,
   ) {
